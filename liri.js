@@ -24,29 +24,30 @@ switch(command){
             return;
         }
         for (let i = 0; i < data.length; i++) {
-            let eDate = moment(data[i].datetime);
+            let momentDate = moment(data[i].datetime, "YYYY-MM-DD[T]HH:mm:ss");
             console.log(JSON.stringify(data[i].venue.name));
             console.log(JSON.stringify(data[i].venue.city));
-            console.log(moment(eDate, "YYYY-MM-DD[T]HH:mm:ss").format('MM/DD/YY'));
-            console.log(eDate);
+            console.log(moment(momentDate).format('MM/DD/YY'));
             console.log(' ');
-        }
+        };
         
     })
     break;
 
     case 'spotify-this-song':
 
-            spotify.search({ type: 'track', query: 'All the Small Things', limit: 1 }, function(err, data) {
+            spotify.search({ type: 'track', query: request, limit: 1 }, function(err, data) {
                 if (err) {
                   return console.log('Error occurred: ' + err);
                 }
                let test = data.tracks.items[0];
-              console.log(test.artists[0].name);
-              console.log(test.name);
-              console.log(test.preview_url);
-              console.log(test.album.name)
-            })
+              console.log(`Artist: ${test.artists[0].name}`);
+              console.log(`Song: ${test.name}`);
+              if(test.preview_url != null){
+              console.log(`Preview URL ${test.preview_url}`);
+              }
+              console.log(`Album Name: ${test.album.name}`);
+            });
 
     break;
 }
