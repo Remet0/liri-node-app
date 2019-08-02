@@ -42,8 +42,8 @@ If no request is made on the movie-this command:
 
 If spotify-this-song returns a song:
 
-![inTheEnd](song.jpg)
+![inTheEnd](/images/song.jpg)
 
 If spotify-this-song doesn't have a song to return:
 
-![no song](song_null.jpg)
+![no song](/images/song_null.jpg)
