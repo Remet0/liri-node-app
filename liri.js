@@ -14,7 +14,7 @@ for (let i = 3; i < process.argv.length; i++) {
   request.push(process.argv[i]);
 }
 request = request.join("");
-console.log('request' + request);
+function liri(command, request){
 switch (command) {
   case "concert-this":
     axios
@@ -40,18 +40,14 @@ switch (command) {
     break;
 
   case "spotify-this-song":
-    spotify.search({ type: "track", query: request, limit: 1 }, function (
-      err,
-      data
-    ) {
+    spotify.search({ type: "track", query: request, limit: 1 }, function (err,data) {
       //checks if request exists, if not then call spotify function with preset song
       if (data === null) {
-        spotify.search({ type: "track", query: "The Sign", limit: 1 }, function (
-          err,
-          data
-        ) {
+        spotify.search({ type: "track", query: "The Sign", limit: 1 }, function (err, data) {
+          console.log("Song not found, Try this song instead!");
           spotifyCall(err, data);
         });
+        return;
       }
       //take response data and log the correct parameters.
       spotifyCall(err, data);
@@ -61,26 +57,31 @@ switch (command) {
 
   case "movie-this":
     if(request === ''){
-      axios.get(`http://omdbapi.com/?t=mr.nobody&plot=short&apikey=trilogy`)
-    
-      .then(function(response){
-        movieCall(response);
-    });
+      movieCall('mr.nobody');
     return;
   };
-    axios.get(`http://omdbapi.com/?t=${request}&plot=short&apikey=trilogy`)
-    .then(function(response){
-        movieCall(response);
-    }) 
+     movieCall(request);
+
     break;
     case 'do-what-it-says':
-
+    fs.readFile('random.txt', 'utf8', function(err, response){
+      if(err){
+        return console.log(err);
+      }
+      let index = response.indexOf(',');
+      let command = response.substr(0 , index);
+      let request = response.substr(index + 1);
+      liri(command, request);
+      } )
 
     break;
 }
+}
+liri(command, request);
 
+
+//function for what to do with spotify API return;
 function spotifyCall(err, data) {
-  console.log("Song not found, Try this song instead!");
   if (err) {
     return console.log("Error occurred: " + err);
   }
@@ -93,19 +94,22 @@ function spotifyCall(err, data) {
   console.log(`Album Name: ${test.album.name}`);
   return;
 }
-
-function movieCall(response){
-  let data = response.data;
-  console.log(data.Title);
-  console.log(data.Year);
-  console.log(data.imdbRating);
-  for (let i = 0; i < data.Ratings.length; i++) {
-    if(data.Ratings[i].Source === 'Rotten Tomatoes'){
-      console.log(`${data.Ratings[i].Source} Rating: ${data.Ratings[i].Value}`);
+//function to call a movie
+function movieCall(movie){
+  axios.get(`http://omdbapi.com/?t=${movie}&plot=short&apikey=trilogy`)
+  .then(function(response){
+    let data = response.data;
+    console.log(data.Title);
+    console.log(data.Year);
+    console.log(data.imdbRating);
+    for (let i = 0; i < data.Ratings.length; i++) {
+      if(data.Ratings[i].Source === 'Rotten Tomatoes'){
+        console.log(`${data.Ratings[i].Source} Rating: ${data.Ratings[i].Value}`);
+      };
     };
-  };
-  console.log(data.Country);
-  console.log(data.Language);
-  console.log(data.Plot);
-  console.log(data.Actors);
+    console.log(data.Country);
+    console.log(data.Language);
+    console.log(data.Plot);
+    console.log(data.Actors);
+  }) 
 }
