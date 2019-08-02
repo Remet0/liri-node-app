@@ -98,6 +98,10 @@ function spotifyCall(err, data) {
 function movieCall(movie){
   axios.get(`http://omdbapi.com/?t=${movie}&plot=short&apikey=trilogy`)
   .then(function(response){
+    if(response.data.Response === "False"){
+      console.log('We dont have information on this movie');
+      return;
+    }
     let data = response.data;
     console.log(data.Title);
     console.log(data.Year);
